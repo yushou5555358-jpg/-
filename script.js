@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzTWF1NEmCXQ1SGQDP92N7MU1hrnydKAoYzDAeCPGCUGiKKLZmXuZlX_Y9a0upMfAyy/exec"; // ★GASのウェブアプリURLを貼り付けてください
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyo_O-OvbHjTnSxPuS5wxGLPt1nDithb-CQWynlK_iBidPv4rQOxYfBShV77YZ2CpuV/exec"; // ★GASのウェブアプリURLを貼り付けてください
 
 let projects = {};
 let currentProjectId = "";
