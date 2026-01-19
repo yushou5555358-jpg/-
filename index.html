@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>提出書類管理ツール</title>
-    <link rel="stylesheet" href="style.css?v=101">
+    <link rel="stylesheet" href="style.css?v=102">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -74,7 +74,6 @@
                             </table>
                         </div>
                     </div>
-                    <div id="noProjectMsg" class="empty-msg">案件を選択してください</div>
                 </div>
 
                 <div class="sticky-note-area">
@@ -96,20 +95,24 @@
         <div id="scan-section" class="tab-content">
             <div class="scan-layout">
                 <div class="scan-controls">
-                    <div class="pdf-drop-zone" id="dropZone">PDFをドロップ</div>
+                    <div class="pdf-drop-zone" id="dropZone">
+                        <p>ここにPDFをドロップ</p>
+                        <span style="font-size:0.8rem;">(またはクリックして選択)</span>
+                    </div>
                     <input type="file" id="pdfInput" accept="application/pdf" style="display:none" multiple>
                     <div id="fileList" class="file-chips"></div>
-                    <input type="text" id="customSearchWords" placeholder="検索ワード..." class="search-input">
+                    <input type="text" id="customSearchWords" placeholder="PDF内を検索..." class="search-input">
                     <div id="scanStatus" class="status-text"></div>
                     <div id="snippetContainer" class="snippet-list"></div>
-                    <button onclick="clearAllScanData()" class="btn-delete" style="width:100%">スキャンデータ消去</button>
+                    <button onclick="clearAllScanData()" class="btn-delete" style="width:100%; margin-top:20px;">スキャンデータ全消去</button>
                 </div>
                 <div class="pdf-preview-pane">
+                    <div id="previewPlaceholder" class="preview-placeholder">検索結果をクリックして表示</div>
                     <iframe id="pdfViewer" src="" class="pdf-frame"></iframe>
                 </div>
             </div>
         </div>
     </div>
-    <script src="script.js?v=101"></script>
+    <script src="script.js?v=102"></script>
 </body>
 </html>

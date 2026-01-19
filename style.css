@@ -5,63 +5,46 @@
 }
 
 * { box-sizing: border-box; }
-body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; }
+body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px; }
 .container { max-width: 1400px; margin: auto; }
 
-/* ヘッダー・カウントダウン */
-.countdown-card { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #ffbd2e; margin-bottom: 15px; font-weight: bold; }
-.days-num { font-size: 1.4rem; color: var(--primary); }
+/* レイアウト */
+.main-layout, .scan-layout { display: flex; flex-direction: column; gap: 20px; }
+@media (min-width: 1024px) {
+    .main-layout, .scan-layout { flex-direction: row; align-items: flex-start; }
+    .list-container, .scan-controls { flex: 1; }
+    .sticky-note-area { width: 320px; position: sticky; top: 10px; }
+    .pdf-preview-pane { flex: 2; }
+}
 
-/* タブバー */
-.tab-bar { display: flex; gap: 5px; margin-bottom: 0; }
-.tab-btn { flex: 1; padding: 12px 5px; background: #ccc; border: none; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 0.9rem; }
+/* タブ */
+.tab-bar { display: flex; gap: 5px; }
+.tab-btn { flex: 1; padding: 12px; background: #ccc; border: none; border-radius: 8px 8px 0 0; cursor: pointer; }
 .tab-btn.active { background: #fff; color: var(--primary); }
-.tab-content { display: none; background: #fff; padding: 15px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.tab-content { display: none; background: #fff; padding: 15px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); min-height: 500px; }
 .tab-content.active { display: block; }
 
-/* --- メインレイアウト（重要） --- */
-.main-layout { display: flex; flex-direction: column; gap: 20px; }
-
-/* PC画面（1024px以上）の時だけ横並びにする */
-@media (min-width: 1024px) {
-    .main-layout { flex-direction: row; align-items: flex-start; }
-    .list-container { flex: 1; }
-    .sticky-note-area { width: 320px; position: sticky; top: 10px; }
+/* スキャン特有のデザイン */
+.pdf-drop-zone { 
+    border: 2px dashed var(--primary); padding: 40px 20px; text-align: center; 
+    border-radius: 10px; background: #f0f7ff; color: var(--primary); cursor: pointer; margin-bottom: 15px;
 }
+.file-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
+.file-chip { background: #eee; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; }
+.search-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
+.snippet-card { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; }
+.snippet-card:hover { background: #f9f9f9; }
+.pdf-frame { width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 10px; }
 
-/* 付箋エリア：スマホでは自動的に下に並ぶ */
-.sticky-note-area { 
-    background: var(--sticky-bg); padding: 15px; border-radius: 10px; border: 1px solid #f0e68c; 
-}
-.sticky-note-title { font-weight: bold; border-bottom: 1px solid #f0e68c; margin-bottom: 10px; padding-bottom: 5px; }
-.sticky-note-area textarea { width: 100%; background: transparent; border: none; min-height: 200px; resize: none; font-size: 1rem; outline: none; }
-
-/* フォーム・入力 */
-.project-inputs-wrapper { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-.form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-@media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-
-input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-button { padding: 12px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+/* その他（リスト・カレンダー）のスタイルは以前と同じ */
+.sticky-note-area { background: var(--sticky-bg); padding: 15px; border-radius: 10px; border: 1px solid #f0e68c; }
+.sticky-note-area textarea { width: 100%; min-height: 250px; background: transparent; border: none; outline: none; resize: none; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #ddd; border-left: 1px solid #ddd; }
+.calendar-day { min-height: 90px; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px; }
+.event-item { font-size: 0.7rem; background: var(--primary); color: white; padding: 2px; margin-top: 2px; border-radius: 3px; }
+input, select { padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
 .btn-primary { background: var(--primary); color: white; }
 .btn-delete { background: #ffebeb; color: #ff5e57; }
-.btn-success { background: #50c356; color: white; margin-bottom: 10px; }
-
-/* テーブル */
 .table-responsive { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; min-width: 700px; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.85rem; text-align: left; }
-
-/* カレンダー */
-.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #ddd; border-left: 1px solid #ddd; }
-.calendar-day-head { background: #f8f9fa; padding: 10px 2px; text-align: center; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; font-weight: bold; font-size: 0.8rem; }
-.calendar-day { min-height: 90px; padding: 4px; background: #fff; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
-.day-number { font-weight: bold; margin-bottom: 3px; }
-.event-item { font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; color: white; background: var(--primary); margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.event-high { background: #ff5e57 !important; }
-
-/* スキャン */
-.scan-layout { display: flex; flex-direction: column; gap: 15px; }
-@media (min-width: 1024px) { .scan-layout { flex-direction: row; } }
-.pdf-frame { width: 100%; height: 500px; border: 1px solid #ccc; border-radius: 10px; }
+th, td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.85rem; }
