@@ -1,3 +1,4 @@
+/* デザイン定数定義 */
 :root {
     --primary: #4a90e2;
     --primary-dark: #357abd;
@@ -13,126 +14,130 @@
     --shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
-/* 基本設定 */
+/* 全体レイアウト設定 */
 body { 
     font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
     background-color: var(--bg-light); 
-    margin: 0; padding: 20px; color: var(--text-main); line-height: 1.6;
+    margin: 0; padding: 20px; 
+    color: var(--text-main); 
+    line-height: 1.6;
 }
-.container { max-width: 1400px; margin: auto; }
+.container { max-width: 1440px; margin: auto; }
 
-/* ヘッダー */
+/* ヘッダーデザイン */
 .main-header { 
     display: flex; justify-content: space-between; align-items: center; 
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    padding: 20px 30px; border-radius: 15px; 
+    padding: 25px 35px; border-radius: 15px; 
     box-shadow: var(--shadow); margin-bottom: 30px; 
-    border-left: 6px solid var(--primary);
+    border-left: 8px solid var(--primary);
 }
-.header-left h1 { margin: 0; font-size: 1.6rem; letter-spacing: 1px; color: var(--primary); }
+.header-left h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; color: var(--primary); }
 .countdown-badge { 
-    background: white; border: 2px solid var(--primary); padding: 10px 20px; 
+    background: white; border: 2px solid var(--primary); padding: 12px 25px; 
     border-radius: 30px; font-weight: bold; color: var(--primary); 
-    box-shadow: 0 2px 5px rgba(74,144,226,0.2);
+    box-shadow: 0 2px 10px rgba(74,144,226,0.15);
 }
 
-/* ナビゲーション */
+/* ナビゲーションメニュー */
 .tab-navigation { display: flex; gap: 10px; margin-bottom: -1px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .nav-item { 
-    padding: 14px 30px; border: none; background: #dfe6ed; 
-    border-radius: 12px 12px 0 0; cursor: pointer; font-weight: bold; 
-    color: var(--text-sub); transition: all 0.3s; white-space: nowrap;
+    padding: 15px 35px; border: none; background: #dfe6ed; 
+    border-radius: 15px 15px 0 0; cursor: pointer; font-weight: bold; 
+    color: var(--text-sub); transition: all 0.3s ease; white-space: nowrap;
 }
 .nav-item.active { 
     background: white; color: var(--primary); 
     box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-    border-bottom: 4px solid var(--primary);
+    border-bottom: 5px solid var(--primary);
 }
 
-/* アニメーション */
-.tab-panel { display: none; animation: slideUp 0.4s ease; }
+/* アニメーション効果 */
+.tab-panel { display: none; animation: slideUp 0.4s ease-out; }
 .tab-panel.active { display: block; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* カード */
-.card { background: white; border: 1px solid var(--border); border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow); }
+/* 共通カードデザイン */
+.card { background: white; border: 1px solid var(--border); border-radius: 18px; padding: 30px; margin-bottom: 30px; box-shadow: var(--shadow); }
 
-/* 入力パーツ */
+/* 入力フォーム類 */
 .custom-select, .custom-input, .custom-date { 
-    padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; 
-    font-size: 0.95rem; background: #fff; transition: all 0.2s; width: 100%; box-sizing: border-box;
+    padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; 
+    font-size: 1rem; background: #fff; transition: all 0.2s; width: 100%; box-sizing: border-box;
 }
-.custom-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(74,144,226,0.1); }
+.custom-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(74,144,226,0.12); }
 
-/* 書類登録グリッド */
+/* 書類登録用グリッドレイアウト */
 .doc-input-grid { 
     display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
     gap: 15px; margin-bottom: 20px; 
 }
 .btn-register-wide { 
     width: 100%; background: var(--primary); color: white; border: none; 
-    padding: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; 
+    padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; 
     font-size: 1.1rem; box-shadow: 0 5px 15px rgba(74,144,226,0.25);
+    transition: background 0.2s;
 }
+.btn-register-wide:hover { background: var(--primary-dark); }
 
-/* ★★★ 重要：横スクロール強制設定 ★★★ */
+/* ★重要：モバイル横スクロール強制対応 */
 .table-container { 
     width: 100%; overflow-x: auto !important; -webkit-overflow-scrolling: touch;
-    border-radius: 12px; border: 1px solid var(--border); margin-top: 10px;
+    border-radius: 12px; border: 1px solid var(--border);
 }
-table { 
-    width: 100%; border-collapse: collapse; min-width: 1100px !important; background: #fff; 
-}
-th { background: #f1f4f7; padding: 18px 12px; text-align: left; font-size: 0.85rem; color: var(--text-sub); }
-td { border-bottom: 1px solid #f1f4f7; padding: 15px 12px; vertical-align: middle; }
+table { width: 100%; border-collapse: collapse; min-width: 1200px !important; background: #fff; }
+th { background: #f8fafc; padding: 20px 15px; text-align: left; font-size: 0.9rem; color: var(--text-sub); border-bottom: 2px solid var(--border); }
+td { border-bottom: 1px solid #f1f4f7; padding: 18px 15px; vertical-align: middle; }
 tr:hover td { background-color: #f9fbff; }
 
 /* ボタン類 */
 .btn-pdf-link { 
     background: var(--success); color: white; text-decoration: none; 
-    padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; 
-    display: inline-flex; align-items: center; gap: 5px; font-weight: bold; white-space: nowrap;
+    padding: 10px 18px; border-radius: 10px; font-size: 0.9rem; 
+    display: inline-flex; align-items: center; gap: 8px; font-weight: bold; white-space: nowrap;
 }
 .btn-add-blue { 
     background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
-    color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;
+    color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer;
 }
-.btn-icon-delete { background: #fff; border: 1px solid #ffccd5; border-radius: 8px; padding: 8px; cursor: pointer; }
+.btn-icon-delete { background: #fff; border: 1px solid #ffccd5; border-radius: 10px; padding: 10px 15px; cursor: pointer; color: var(--accent-red); font-weight: bold; }
 
-/* レイアウト */
-.app-layout { display: flex; gap: 30px; flex-direction: column; }
-@media (min-width: 1024px) {
+/* 2カラムレイアウト設定 */
+.app-layout { display: flex; gap: 35px; flex-direction: column; }
+@media (min-width: 1200px) {
     .app-layout { flex-direction: row; }
     .content-main { flex: 1; }
-    .sticky-note-sidebar { width: 340px; }
+    .sticky-note-sidebar { width: 380px; }
 }
 
-/* サイドバー・メモ */
+/* メモ帳エリア */
 .sticky-note { 
-    background: var(--sticky-yellow); padding: 30px; border-radius: 3px; 
-    box-shadow: 8px 8px 20px rgba(0,0,0,0.06); position: sticky; top: 20px;
-    border-left: 6px solid var(--sticky-border);
+    background: var(--sticky-yellow); padding: 35px; border-radius: 5px; 
+    box-shadow: 10px 10px 25px rgba(0,0,0,0.07); position: sticky; top: 20px;
+    border-left: 8px solid var(--sticky-border);
 }
 #freeMemo, #projectSpecificMemo { 
-    width: 100%; min-height: 400px; border: 1px solid var(--border); 
-    border-radius: 12px; padding: 20px; font-size: 1.1rem; line-height: 1.8;
-    resize: vertical; outline: none; background: #fdfdfd; box-sizing: border-box;
+    width: 100%; min-height: 450px; border: 1px solid var(--border); 
+    border-radius: 15px; padding: 25px; font-size: 1.15rem; line-height: 1.8;
+    resize: vertical; outline: none; background: #ffffff; box-sizing: border-box;
 }
 
-/* 資料スキャンエリア */
-.drop-zone { border: 3px dashed var(--border); border-radius: 15px; padding: 40px; text-align: center; color: var(--text-sub); cursor: pointer; transition: 0.3s; }
-.drop-zone:hover { border-color: var(--primary); background: var(--primary-light); }
-.pdf-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
-canvas { width: 100%; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+/* 資料スキャン用 */
+.drop-zone { border: 4px dashed var(--border); border-radius: 20px; padding: 60px; text-align: center; color: var(--text-sub); cursor: pointer; transition: 0.3s; font-weight: bold; }
+.drop-zone:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.status-text { margin-top: 15px; color: var(--primary); font-weight: bold; text-align: center; }
+.pdf-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 30px; }
+canvas { width: 100%; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-/* カレンダー */
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border-radius: 15px; overflow: hidden; }
-.calendar-day { background: white; min-height: 140px; padding: 12px; }
-.event-label { font-size: 0.75rem; padding: 5px 8px; margin-bottom: 5px; border-radius: 6px; background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* カレンダー用 */
+.calendar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: var(--border); border: 2px solid var(--border); border-radius: 15px; overflow: hidden; }
+.calendar-day { background: white; min-height: 150px; padding: 15px; }
+.event-label { font-size: 0.8rem; padding: 6px 10px; margin-bottom: 6px; border-radius: 8px; background: var(--primary-light); color: var(--primary); border-left: 5px solid var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* スマホ対応 */
-@media (max-width: 600px) {
+/* スマホ最適化 */
+@media (max-width: 768px) {
     body { padding: 10px; }
-    .main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
-    .nav-item { padding: 12px 15px; font-size: 0.9rem; }
+    .main-header { flex-direction: column; gap: 15px; padding: 20px; text-align: center; }
+    .nav-item { padding: 12px 18px; font-size: 0.9rem; }
 }
