@@ -1,98 +1,67 @@
 :root {
     --primary: #4a90e2;
-    --success: #50c356;
-    --danger: #ff5e57;
-    --warning: #ffbd2e;
     --bg: #f0f2f5;
     --sticky-bg: #fff9c4;
 }
 
 * { box-sizing: border-box; }
-body { 
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
-    background-color: var(--bg); 
-    margin: 0; 
-    padding: 10px; 
-    color: #333; 
-}
+body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; }
 .container { max-width: 1400px; margin: auto; }
 
 /* ヘッダー・カウントダウン */
-header { margin-bottom: 15px; }
-h1 { font-size: 1.4rem; margin: 5px 0; }
-.countdown-card { 
-    background: #fff; padding: 12px; border-radius: 10px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-    border-left: 5px solid var(--warning); 
-    font-weight: bold; margin-bottom: 10px;
-}
-.days-num { font-size: 1.3rem; color: var(--primary); }
+.countdown-card { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #ffbd2e; margin-bottom: 15px; font-weight: bold; }
+.days-num { font-size: 1.4rem; color: var(--primary); }
 
-/* タブボタン */
-.tab-bar { display: flex; gap: 4px; }
-.tab-btn { 
-    flex: 1; background: #ddd; border: none; padding: 12px 2px; 
-    cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0; font-size: 0.85rem; 
-}
+/* タブバー */
+.tab-bar { display: flex; gap: 5px; margin-bottom: 0; }
+.tab-btn { flex: 1; padding: 12px 5px; background: #ccc; border: none; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 0.9rem; }
 .tab-btn.active { background: #fff; color: var(--primary); }
-.tab-content { 
-    display: none; background: #fff; padding: 15px; 
-    border-radius: 0 0 10px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-}
+.tab-content { display: none; background: #fff; padding: 15px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .tab-content.active { display: block; }
 
-/* --- レイアウト制御（PC: 横並び / スマホ: 縦並び） --- */
+/* --- メインレイアウト（重要） --- */
 .main-layout { display: flex; flex-direction: column; gap: 20px; }
 
-@media (min-width: 1024px) { 
-    .main-layout { flex-direction: row; align-items: flex-start; } 
+/* PC画面（1024px以上）の時だけ横並びにする */
+@media (min-width: 1024px) {
+    .main-layout { flex-direction: row; align-items: flex-start; }
     .list-container { flex: 1; }
     .sticky-note-area { width: 320px; position: sticky; top: 10px; }
 }
 
-/* 付箋メモのデザイン */
+/* 付箋エリア：スマホでは自動的に下に並ぶ */
 .sticky-note-area { 
-    background: var(--sticky-bg); padding: 15px; border-radius: 10px; 
-    border: 1px solid #f0e68c; box-shadow: 3px 3px 8px rgba(0,0,0,0.05);
+    background: var(--sticky-bg); padding: 15px; border-radius: 10px; border: 1px solid #f0e68c; 
 }
 .sticky-note-title { font-weight: bold; border-bottom: 1px solid #f0e68c; margin-bottom: 10px; padding-bottom: 5px; }
-.sticky-note-area textarea { 
-    width: 100%; background: transparent; border: none; 
-    min-height: 250px; resize: none; font-size: 0.95rem; outline: none;
-}
+.sticky-note-area textarea { width: 100%; background: transparent; border: none; min-height: 200px; resize: none; font-size: 1rem; outline: none; }
 
-/* フォームと入力項目 */
-.form-title { font-weight: bold; margin-bottom: 10px; color: var(--primary); font-size: 0.9rem; }
-.project-inputs-wrapper { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+/* フォーム・入力 */
+.project-inputs-wrapper { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
 .form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
 @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
 
-input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-button { padding: 12px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
-.btn-add, .btn-config { background: var(--primary); color: white; }
-.btn-delete { background: #ffebeb; color: var(--danger); }
-.btn-excel { background: var(--success); color: white; margin-bottom: 10px; }
+input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+button { padding: 12px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-delete { background: #ffebeb; color: #ff5e57; }
+.btn-success { background: #50c356; color: white; margin-bottom: 10px; }
 
-/* テーブルのレスポンシブ化 */
-.table-responsive { overflow-x: auto; margin-top: 10px; }
-table { width: 100%; border-collapse: collapse; min-width: 750px; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.85rem; }
-.row-completed { background: #f9f9f9; opacity: 0.6; text-decoration: line-through; }
+/* テーブル */
+.table-responsive { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.85rem; text-align: left; }
 
 /* カレンダー */
-.calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #ddd; border-left: 1px solid #ddd; }
 .calendar-day-head { background: #f8f9fa; padding: 10px 2px; text-align: center; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; font-weight: bold; font-size: 0.8rem; }
-.calendar-day { min-height: 100px; padding: 4px; background: #fff; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
-.day-number { font-weight: bold; font-size: 0.85rem; }
-.event-item { font-size: 0.65rem; padding: 2px 4px; margin-top: 2px; border-radius: 3px; color: white; background: var(--primary); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.event-high { background: var(--danger) !important; }
-.event-mid { background: #ff9800 !important; }
-.event-done { background: #bbb !important; text-decoration: line-through; }
+.calendar-day { min-height: 90px; padding: 4px; background: #fff; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+.day-number { font-weight: bold; margin-bottom: 3px; }
+.event-item { font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; color: white; background: var(--primary); margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.event-high { background: #ff5e57 !important; }
 
-/* スキャン画面 */
+/* スキャン */
 .scan-layout { display: flex; flex-direction: column; gap: 15px; }
 @media (min-width: 1024px) { .scan-layout { flex-direction: row; } }
-.pdf-frame { width: 100%; height: 600px; border: 1px solid #ccc; border-radius: 10px; }
-.pdf-drop-zone { border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 10px; background: #f0f7ff; color: var(--primary); cursor: pointer; }
-.status-text { margin: 10px 0; font-weight: bold; color: var(--primary); font-size: 0.9rem; }
+.pdf-frame { width: 100%; height: 500px; border: 1px solid #ccc; border-radius: 10px; }
