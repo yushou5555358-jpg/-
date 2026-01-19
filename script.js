@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyo_O-OvbHjTnSxPuS5wxGLPt1nDithb-CQWynlK_iBidPv4rQOxYfBShV77YZ2CpuV/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxkLAHAGhhg2cSm2GibjEbB8xMGbnnFS6aW9KrsX4cZCjQlXgJu-r6dTOsxaH7xDc1D/exec"; 
 
 let projects = {};
 let currentProjectId = "";
