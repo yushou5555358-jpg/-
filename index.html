@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>提出書類管理ツール</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 提出書類管理ツール</h1>
+            <div id="projectCountdown" class="countdown-card">案件を選択してください</div>
+        </header>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" id="tabListBtn" onclick="switchTab('list-section', this)">📋 書類リスト</button>
+            <button class="tab-btn" id="tabScanBtn" onclick="switchTab('scan-section', this)">🔍 資料スキャン</button>
+        </div>
+        
+        <div id="list-section" class="tab-content active">
+            <div class="main-layout">
+                <div class="list-container">
+                    <section class="project-info">
+                        <div class="form-title">Step 1: 案件を選択または新規作成</div>
+                        <div class="project-inputs-wrapper">
+                            <select id="projectSelect" onchange="switchProject(this.value)" style="flex:1; min-width:220px; font-weight:bold; border:2px solid var(--primary); height:40px;">
+                                <option value="">-- 案件を選択 --</option>
+                            </select>
+                            <div style="display:flex; gap:5px; flex:1;">
+                                <input type="text" id="newProjectName" placeholder="新しい案件名を入力" style="flex:1;">
+                                <button onclick="createNewProject()" class="btn-config">＋新規追加</button>
+                            </div>
+                            <button onclick="deleteCurrentProject()" class="btn-delete" title="現在の案件を削除">🗑️</button>
+                        </div>
+                        <div id="projectDateArea" style="display:none; margin-top:15px; padding-top:15px; border-top:1px dashed #ddd; align-items:center; gap:10px;">
+                            <span>工期：</span><input type="date" id="projectStart" onchange="updateProjectDates()">
+                            <span>〜</span><input type="date" id="projectEnd" onchange="updateProjectDates()">
+                        </div>
+                    </section>
+
+                    <section id="projectMemoArea" style="display:none; background:#fff; padding:15px; border-radius:15px; margin-bottom:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--success);">
+                        <div class="form-title" style="border:none; padding:0;">📝 この案件のメモ (案件ごとに保存)</div>
+                        <textarea id="projectSpecificMemo" oninput="saveProjectMemo()" placeholder="この案件だけの特記事項（搬入ルール、担当者連絡先など）を入力してください" style="width:100%; height:80px; border:1px solid #eee; border-radius:8px; padding:10px; margin-top:10px; resize:vertical; font-family:inherit;"></textarea>
+                    </section>
+
+                    <div class="sync-bar" style="margin-bottom:20px;">
+                        <button onclick="importData()" class="btn-load">📥 全データ読込(json)</button>
+                        <button onclick="exportData()" class="btn-save">💾 全データ保存(json)</button>
+                    </div>
+
+                    <section class="add-form" id="inputFormArea" style="display:none;">
+                        <div class="form-title">Step 2: 書類をリストに追加</div>
+                        <div class="form-grid">
+                            <input type="text" id="docName" placeholder="書類の名前（必須）">
+                            <input type="text" id="target" placeholder="提出先">
+                            <input type="date" id="deadline">
+                            <select id="priority">
+                                <option value="最優先★★">最優先★★</option>
+                                <option value="重要★">重要★</option>
+                                <option value="通常" selected>通常</option>
+                            </select>
+                            <input type="text" id="filePath" placeholder="フォルダのパス">
+                            <input type="text" id="memo" placeholder="備考">
+                        </div>
+                        <button onclick="addDoc()" class="btn-add">リストに追加する</button>
+                    </section>
+
+                    <div id="listArea" style="display:none;">
+                        <div class="table-actions"><button onclick="exportExcel()" class="btn-excel">📊 Excel出力</button></div>
+                        <table id="targetTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">完了</th>
+                                    <th style="width: 130px;">重要度</th>
+                                    <th>書類の名前</th>
+                                    <th>提出先</th>
+                                    <th>期限</th>
+                                    <th>備考</th>
+                                    <th>フォルダ</th>
+                                    <th style="width: 60px;">削除</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="noProjectMsg" style="text-align:center; padding:60px; color:#888; background:#fff; border-radius:15px; border:2px dashed #ccc;">
+                        <h3>案件が選択されていません</h3>
+                    </div>
+                </div>
+
+                <div class="sticky-note-area">
+                    <div class="sticky-note-title">📌 案件共通メモ (全案件で共通)</div>
+                    <textarea id="freeMemo" placeholder="全案件で共通して表示したい内容（提出ルールや全社共通の連絡先など）を入力"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="scan-section" class="tab-content">
+            <section class="scan-container">
+                <div class="form-title">🔍 資料の横断検索 & ページプレビュー</div>
+                <div class="scan-layout">
+                    <div class="scan-controls">
+                        <div class="pdf-drop-zone" id="dropZone">
+                            <div>ここにPDFをドロップして解析</div>
+                            <input type="file" id="pdfInput" accept="application/pdf" style="display:none" multiple>
+                        </div>
+                        <div id="fileList" class="file-chips"></div>
+                        <div class="search-box-wrapper" style="margin-top:20px;">
+                            <input type="text" id="customSearchWords" placeholder="キーワードを入力して検索..." style="width:100%; padding:12px; border:2px solid var(--primary); border-radius:8px;">
+                        </div>
+                        <div id="scanStatus" class="scan-status" style="margin:10px 0; font-size:0.9em; color:var(--primary);"></div>
+                        <div id="snippetContainer" class="snippet-list"></div>
+                        <button onclick="clearAllScanData()" class="btn-delete" style="width:100%; margin-top:20px;">スキャンデータを全消去</button>
+                    </div>
+                    <div class="pdf-preview-pane">
+                        <div id="previewPlaceholder" class="preview-placeholder">検索結果をクリックして表示</div>
+                        <iframe id="pdfViewer" src="" style="display:none; width:100%; height:800px; border:none; border-radius:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></iframe>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <input type="file" id="fileInput" style="display:none" accept=".json">
+    <script src="script.js"></script>
+</body>
+</html>
