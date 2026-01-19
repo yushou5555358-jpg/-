@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>提出書類管理システム</title>
-    <link rel="stylesheet" href="style.css?v=20260119_final">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -19,7 +18,6 @@
         <nav class="tab-navigation">
             <button class="nav-item active" onclick="switchTab('list-section', this)">📋 リスト・メモ</button>
             <button class="nav-item" onclick="switchTab('calendar-section', this); renderCalendar();">📅 カレンダー</button>
-            <button class="nav-item" onclick="switchTab('scan-section', this)">🔍 資料スキャン</button>
         </nav>
         
         <div id="list-section" class="tab-panel active">
@@ -43,13 +41,12 @@
                     </div>
 
                     <div id="projectMemoArea" class="card memo-card" style="display:none;">
-                        <h3>📌 案件詳細メモ（打合せ記録・現場注意点）</h3>
-                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="この案件に関する重要な情報を入力してください。自動保存されます。"></textarea>
+                        <h3>📌 案件詳細メモ</h3>
+                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="この案件に関する重要な情報を入力してください。"></textarea>
                     </div>
 
                     <div id="listArea" style="display:none;">
                         <div class="card doc-registration-card">
-                            <p style="margin-top:0; font-weight:bold; color:#666;">新しい書類の登録</p>
                             <div class="doc-input-grid">
                                 <input type="text" id="newDocName" placeholder="書類名" class="custom-input">
                                 <input type="text" id="newDocTarget" placeholder="提出先" class="custom-input">
@@ -66,7 +63,7 @@
 
                         <div class="card list-card">
                             <div class="table-container">
-                                <table>
+                                <table id="docTable">
                                     <thead>
                                         <tr>
                                             <th>完了</th><th>重要度</th><th>書類名</th><th>提出先</th><th>期限</th><th>備考</th><th>資料</th><th>削除</th>
@@ -82,7 +79,6 @@
                 <aside class="sticky-note-sidebar">
                     <div class="sticky-note">
                         <h3>📌 全案件共通メモ</h3>
-                        <p class="sticky-subtext">共通の連絡事項など</p>
                         <textarea id="freeMemo"></textarea>
                     </div>
                 </aside>
@@ -99,14 +95,7 @@
                 <div id="calendarGrid" class="calendar-grid"></div>
             </div>
         </div>
-
-        <div id="scan-section" class="tab-panel">
-            <div class="card">
-                <div class="drop-zone" id="dropZone">PDFをここにドロップ</div>
-                <div id="fileList"></div>
-            </div>
-        </div>
     </div>
-    <script src="script.js?v=20260119_final"></script>
+    <script src="script.js"></script>
 </body>
 </html>
