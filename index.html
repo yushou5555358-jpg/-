@@ -3,39 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提出書類管理ツール</title>
-    <link rel="stylesheet" href="style.css?v=201">
+    <title>提出書類管理システム</title>
+    <link rel="stylesheet" href="style.css?v=501">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📄 提出書類マネージャー</h1>
-            <div id="projectCountdown" class="countdown-card">まずは、進める案件を選んでね！</div>
+            <h1>📄 提出書類管理</h1>
+            <div id="projectCountdown" class="countdown-card">案件を選択してください</div>
         </header>
 
         <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchTab('list-section', this)">📋 書類リスト</button>
+            <button class="tab-btn active" onclick="switchTab('list-section', this)">📋 リスト・メモ</button>
             <button class="tab-btn" onclick="switchTab('calendar-section', this); renderCalendar();">📅 カレンダー</button>
-            <button class="tab-btn" onclick="switchTab('scan-section', this)">🔍 PDFスキャン</button>
+            <button class="tab-btn" onclick="switchTab('scan-section', this)">🔍 資料スキャン</button>
         </div>
         
         <div id="list-section" class="tab-content active">
             <div class="main-layout">
                 <div class="list-container">
                     <section class="project-info">
-                        <div class="form-title">✨ どの現場（案件）を動かす？</div>
-                        <div class="project-inputs-wrapper">
+                        <div class="input-group">
                             <select id="projectSelect" onchange="switchProject(this.value)">
                                 <option value="">-- 案件を選択 --</option>
                             </select>
-                            <input type="text" id="newProjectName" placeholder="新しい現場の名前を入力...">
-                            <button onclick="createNewProject()" class="btn-primary">新しい案件を作る</button>
-                            <button onclick="deleteCurrentProject()" class="btn-delete" title="この案件を消す">🗑️</button>
+                            <input type="text" id="newProjectName" placeholder="新規案件名">
+                            <button onclick="createNewProject()" class="btn-primary">追加</button>
+                            <button onclick="deleteCurrentProject()" class="btn-delete">🗑️</button>
                         </div>
                         <div id="projectDateArea" class="date-row" style="display:none;">
-                            <span>🗓️ 工期：</span>
+                            <span>工期：</span>
                             <input type="date" id="projectStart" onchange="updateProjectDates()">
                             <span>〜</span>
                             <input type="date" id="projectEnd" onchange="updateProjectDates()">
@@ -43,57 +42,54 @@
                     </section>
 
                     <section id="projectMemoArea" style="display:none;" class="memo-box">
-                        <div class="form-title">📝 この現場だけの「忘備録」</div>
-                        <textarea id="projectSpecificMemo" oninput="saveProjectMemo()" placeholder="この案件だけの注意点や、やり取りをメモしてね"></textarea>
+                        <div class="sub-title">📌 案件詳細メモ（打合せ記録・現場注意点など）</div>
+                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="この案件に関する重要な情報を自由に入力してください。自動で保存されます。"></textarea>
                     </section>
 
                     <section class="add-form" id="inputFormArea" style="display:none;">
-                        <div class="form-title">📎 新しく出す書類を登録する</div>
+                        <div class="sub-title">書類の登録</div>
                         <div class="form-grid">
-                            <input type="text" id="docName" placeholder="書類の名前（例：施工計画書）">
-                            <input type="text" id="target" placeholder="どこに出す？（例：役所、元請）">
+                            <input type="text" id="docName" placeholder="書類名">
+                            <input type="text" id="target" placeholder="提出先">
                             <input type="date" id="deadline">
                             <select id="priority">
-                                <option value="最優先★★">急ぎ！最優先★★</option>
-                                <option value="重要★">忘れないで！重要★</option>
+                                <option value="最優先★★">最優先★★</option>
+                                <option value="重要★">重要★</option>
                                 <option value="通常" selected>通常</option>
                             </select>
-                            <input type="text" id="filePath" placeholder="PC内の保存場所（パス）">
-                            <input type="text" id="memo" placeholder="ちょっとしたメモ（備考）">
+                            <input type="text" id="filePath" placeholder="フォルダパス">
+                            <input type="text" id="memo" placeholder="備考">
                         </div>
-                        <button onclick="addDoc()" class="btn-primary" style="width:100%; font-size:1.1rem;">書類をリストに追加する</button>
+                        <button onclick="addDoc()" class="btn-primary" style="width:100%">登録</button>
                     </section>
 
                     <div id="listArea" style="display:none;">
-                        <button onclick="exportExcel()" class="btn-success">📊 リストをExcelに書き出す</button>
+                        <button onclick="exportExcel()" class="btn-success">📊 Excel出力</button>
                         <div class="table-responsive">
                             <table id="targetTable">
                                 <thead>
                                     <tr>
-                                        <th>完了</th><th>ランク</th><th>書類の名前</th><th>提出先</th><th>期限</th><th>備考</th><th>場所</th><th>消去</th>
+                                        <th>完了</th><th>重要度</th><th>書類名</th><th>提出先</th><th>期限</th><th>備考</th><th>パス</th><th>削除</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody"></tbody>
                             </table>
                         </div>
                     </div>
-                    <div id="noProjectMsg" class="empty-msg">
-                        <p style="font-size:1.2rem;">👆 上のメニューから案件を選んでスタート！</p>
-                    </div>
                 </div>
 
                 <div class="sticky-note-area">
-                    <div class="sticky-note-title">📌 全体共通メモ</div>
-                    <textarea id="freeMemo" placeholder="全ての現場で共通して使うメモ（電話番号や共通ルールなど）"></textarea>
+                    <div class="sticky-note-title">📌 全案件共通メモ</div>
+                    <textarea id="freeMemo" placeholder="案件をまたぐ共通の連絡事項など"></textarea>
                 </div>
             </div>
         </div>
 
         <div id="calendar-section" class="tab-content">
             <div class="calendar-header">
-                <button onclick="changeMonth(-1)">◀ 前の月</button>
+                <button onclick="changeMonth(-1)">◀ 前月</button>
                 <h2 id="currentMonthDisplay"></h2>
-                <button onclick="changeMonth(1)">次の月 ▶</button>
+                <button onclick="changeMonth(1)">次月 ▶</button>
             </div>
             <div id="calendarGrid" class="calendar-grid"></div>
         </div>
@@ -102,23 +98,27 @@
             <div class="scan-layout">
                 <div class="scan-controls">
                     <div class="pdf-drop-zone" id="dropZone">
-                        <p>🔎 PDFをここにポイッとドロップ！</p>
-                        <span style="font-size:0.8rem;">（書類の中身を自動で検索できるようにします）</span>
+                        PDFファイルをここにドロップ
+                        <span style="font-size:0.9rem; color:#666; font-weight:normal; margin-top:10px;">またはクリックして選択</span>
                     </div>
                     <input type="file" id="pdfInput" accept="application/pdf" style="display:none" multiple>
+                    
                     <div id="fileList" class="file-chips"></div>
-                    <input type="text" id="customSearchWords" placeholder="調べたい言葉を入力してね..." class="search-input">
+                    
+                    <div class="sub-title" style="margin-top:25px;">🔍 資料内キーワード検索</div>
+                    <input type="text" id="customSearchWords" placeholder="PDF内の文字を検索（例：コンクリート）" class="search-input">
+                    
                     <div id="scanStatus" class="status-text"></div>
                     <div id="snippetContainer" class="snippet-list"></div>
-                    <button onclick="clearAllScanData()" class="btn-delete" style="width:100%; margin-top:20px;">スキャンしたデータを全部消す</button>
+                    
+                    <button onclick="clearAllScanData()" class="btn-delete-full" style="margin-top:40px;">スキャンデータをすべて消去</button>
                 </div>
                 <div class="pdf-preview-pane">
-                    <div id="previewPlaceholder" class="preview-placeholder">見つかった場所をクリックすると、ここに表示されるよ</div>
                     <iframe id="pdfViewer" src="" class="pdf-frame"></iframe>
                 </div>
             </div>
         </div>
     </div>
-    <script src="script.js?v=201"></script>
+    <script src="script.js?v=501"></script>
 </body>
 </html>
