@@ -1,5 +1,5 @@
-// GAS連携URL（ご自身のURLに書き換えてください）
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzhC0sz7u3He5LhlTDjnoEOD8ORBu7-lYVRyVxq5efByc_CkuOpPAGU6JrnaRCO43PZ/exec"; 
+// 1. 新しくデプロイしたURLに書き換えてください
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwL-InP7z40rVvIbemlt6SG3Yadtkle6bnbIgJqfftWorjGnlYmE_ROF8MNSU2xFB49zQ/exec"; 
 
 let projects = {};
 let currentProjectId = "";
@@ -14,34 +14,48 @@ const INITIAL_MASTER = [
     { name: "完成図書", target: "監督員", ref: "共通仕様書 1-1-1-23", status: "未着手", importance: "通常", deadline: "", fileData: "" }
 ];
 
+// 起動時にクラウドからデータを取得
 window.onload = async function() {
     loadFreeMemo();
-    if (GAS_URL.includes("http")) await loadFromCloud();
+    if (GAS_URL.includes("http")) {
+        await loadFromCloud();
+    }
     refreshProjectSelect();
-    document.getElementById("freeMemo").addEventListener("input", (e) => localStorage.setItem("doc_manager_free_memo", e.target.value));
     
-    // スキャンタブのクリックイベント設定
-    const dz = document.getElementById("dropZone");
-    if(dz) dz.addEventListener("click", () => document.getElementById("scanInput").click());
+    document.getElementById("freeMemo").addEventListener("input", (e) => {
+        localStorage.setItem("doc_manager_free_memo", e.target.value);
+    });
 };
 
-// --- 保存・読み込み ---
+// 【クラウド保存】
 async function saveAll() {
+    if (!GAS_URL.includes("http")) return;
     try {
-        await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ method: "save", payload: JSON.stringify({ projects }) }) });
-        renderCalendar();
-    } catch (e) { console.error("Save error:", e); }
+        await fetch(GAS_URL, { 
+            method: "POST", 
+            body: JSON.stringify({ method: "save", payload: JSON.stringify({ projects }) }) 
+        });
+        console.log("Cloud Saved");
+    } catch (e) { console.error("Save Error:", e); }
 }
 
+// 【クラウド読み込み】
 async function loadFromCloud() {
     try {
-        const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ method: "load" }) });
+        const response = await fetch(GAS_URL, { 
+            method: "POST", 
+            body: JSON.stringify({ method: "load" }) 
+        });
         const result = await response.json();
-        projects = result.projects || {};
-    } catch (e) { console.error("Load error:", e); }
+        if (result && result.projects) {
+            projects = result.projects;
+        }
+        renderTable();
+        renderCalendar();
+    } catch (e) { console.error("Load Error:", e); }
 }
 
-// --- 案件管理 ---
+// --- 案件操作 ---
 function createNewProject() {
     const name = document.getElementById("newProjectName").value.trim();
     if (!name) return;
@@ -66,27 +80,19 @@ function switchProject(id) {
     }
 }
 
-// --- 書類・ファイル操作 ---
-function addNewDocument() {
-    if (!currentProjectId) return;
-    const name = document.getElementById("newDocName").value.trim();
-    if (!name) return;
-    projects[currentProjectId].docs.push({
-        status: "未着手", importance: document.getElementById("newDocImportance").value,
-        name, target: document.getElementById("newDocTarget").value,
-        deadline: document.getElementById("newDocDeadline").value, ref: document.getElementById("newDocRef").value,
-        fileData: ""
-    });
-    document.getElementById("newDocName").value = "";
-    saveAll(); renderTable();
-}
-
+// --- 添付ファイル（クラウド共有の鍵） ---
 function handleFileUpload(index, file) {
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+        alert("ファイルが大きすぎます(5MBまで)。");
+        return;
+    }
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
+        // fileDataにBase64形式で保存
         projects[currentProjectId].docs[index].fileData = e.target.result;
-        saveAll(); renderTable();
+        await saveAll(); // クラウドへ送信
+        renderTable();
     };
     reader.readAsDataURL(file);
 }
@@ -94,7 +100,7 @@ function handleFileUpload(index, file) {
 function renderTable() {
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = "";
-    if(!currentProjectId) return;
+    if(!currentProjectId || !projects[currentProjectId]) return;
     
     const sortedDocs = [...projects[currentProjectId].docs].sort((a, b) => {
         const statusA = a.status === '提出済' ? 1 : 0;
@@ -109,9 +115,9 @@ function renderTable() {
         if (item.status === '提出済') row.style.opacity = "0.5";
 
         row.innerHTML = `
-            <td><input type="checkbox" ${item.status==='提出済'?'checked':''} onchange="updateDocField(${realIndex}, 'status', this.checked?'提出済':'未着手'); renderTable();"></td>
+            <td><input type="checkbox" ${item.status==='提出済'?'checked':''} onchange="updateDocField(${realIndex}, 'status', this.checked?'提出済':'未着手');"></td>
             <td>
-                <select onchange="updateDocField(${realIndex}, 'importance', this.value); renderTable();" class="custom-select">
+                <select onchange="updateDocField(${realIndex}, 'importance', this.value);" class="custom-select">
                     <option value="通常" ${item.importance==='通常'?'selected':''}>通常</option>
                     <option value="重要" ${item.importance==='重要'?'selected':''}>重要</option>
                     <option value="至急" ${item.importance==='至急'?'selected':''}>至急</option>
@@ -119,7 +125,7 @@ function renderTable() {
             </td>
             <td><b style="${item.importance==='至急'?'color:red;':''}">${item.name}</b></td>
             <td>${item.target}</td>
-            <td><input type="date" value="${item.deadline}" onchange="updateDocField(${realIndex}, 'deadline', this.value); renderTable();" class="custom-date"></td>
+            <td><input type="date" value="${item.deadline}" onchange="updateDocField(${realIndex}, 'deadline', this.value);" class="custom-date"></td>
             <td><input type="text" value="${item.ref}" onchange="updateDocField(${realIndex}, 'ref', this.value)" class="custom-input"></td>
             <td>
                 ${item.fileData ? `<a href="${item.fileData}" download="${item.name}" class="btn-pdf-link">📄 表示/保存</a><br>` : ''}
@@ -131,42 +137,14 @@ function renderTable() {
             <td><button onclick="deleteDoc(${realIndex})" class="btn-icon-delete">×</button></td>
         `;
     });
-    renderCalendar();
 }
 
-// --- 資料スキャン機能（復活） ---
-async function handleFileSelect(e) { processPDF(e.target.files[0]); }
-async function handleFileDrop(e) { e.preventDefault(); processPDF(e.dataTransfer.files[0]); }
-
-async function processPDF(file) {
-    if (!file || file.type !== "application/pdf") return;
-    const status = document.getElementById("scanStatus");
-    const previewArea = document.getElementById("pdfPreviewArea");
-    status.innerText = "読み込み中...";
-    previewArea.innerHTML = "";
-
-    const reader = new FileReader();
-    reader.onload = async function() {
-        const typedarray = new Uint8Array(this.result);
-        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-        status.innerText = `全 ${pdf.numPages} ページをプレビュー表示中`;
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const viewport = page.getViewport({scale: 0.5});
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            await page.render({canvasContext: context, viewport: viewport}).promise;
-            previewArea.appendChild(canvas);
-        }
-    };
-    reader.readAsArrayBuffer(file);
+// 共通機能
+function updateDocField(i, f, v) { 
+    projects[currentProjectId].docs[i][f] = v; 
+    saveAll(); 
+    if (f === 'status' || f === 'importance' || f === 'deadline') renderTable();
 }
-
-// --- その他UI機能 ---
-function updateDocField(i, f, v) { projects[currentProjectId].docs[i][f] = v; saveAll(); }
 function refreshProjectSelect() {
     const s = document.getElementById("projectSelect");
     s.innerHTML = '<option value="">案件を選択</option>';
@@ -204,7 +182,6 @@ function renderCalendar() {
                 if (doc.deadline === dateStr) {
                     const label = document.createElement("div"); label.className = "event-label";
                     if (doc.importance !== "通常") label.classList.add("important");
-                    if (doc.status === "提出済") label.classList.add("completed");
                     label.innerText = doc.name; cell.appendChild(label);
                 }
             });
@@ -215,3 +192,43 @@ function renderCalendar() {
 function changeMonth(d) { viewDate.setMonth(viewDate.getMonth() + d); renderCalendar(); }
 function deleteDoc(i) { if(confirm("削除しますか？")){ projects[currentProjectId].docs.splice(i, 1); saveAll(); renderTable(); } }
 function deleteCurrentProject() { if(confirm("消去しますか？")) { delete projects[currentProjectId]; saveAll(); refreshProjectSelect(); switchProject(""); } }
+function addNewDocument() {
+    if (!currentProjectId) return;
+    const name = document.getElementById("newDocName").value.trim();
+    if (!name) return;
+    projects[currentProjectId].docs.push({
+        status: "未着手", importance: document.getElementById("newDocImportance").value,
+        name, target: document.getElementById("newDocTarget").value,
+        deadline: document.getElementById("newDocDeadline").value, ref: document.getElementById("newDocRef").value,
+        fileData: ""
+    });
+    document.getElementById("newDocName").value = "";
+    saveAll(); renderTable();
+}
+
+// PDFスキャン機能
+async function handleFileSelect(e) { processPDF(e.target.files[0]); }
+async function handleFileDrop(e) { e.preventDefault(); processPDF(e.dataTransfer.files[0]); }
+async function processPDF(file) {
+    if (!file || file.type !== "application/pdf") return;
+    const status = document.getElementById("scanStatus");
+    const previewArea = document.getElementById("pdfPreviewArea");
+    status.innerText = "読み込み中...";
+    previewArea.innerHTML = "";
+    const reader = new FileReader();
+    reader.onload = async function() {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+        status.innerText = `全 ${pdf.numPages} ページ表示中`;
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({scale: 0.5});
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            await page.render({canvasContext: context, viewport: viewport}).promise;
+            previewArea.appendChild(canvas);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
