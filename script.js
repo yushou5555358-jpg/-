@@ -1,4 +1,4 @@
-// 【重要】ここにGASのデプロイURLを貼ってください
+// GAS連携URL（ご自身のURLに書き換えてください）
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzhC0sz7u3He5LhlTDjnoEOD8ORBu7-lYVRyVxq5efByc_CkuOpPAGU6JrnaRCO43PZ/exec"; 
 
 let projects = {};
@@ -19,13 +19,18 @@ window.onload = async function() {
     if (GAS_URL.includes("http")) await loadFromCloud();
     refreshProjectSelect();
     document.getElementById("freeMemo").addEventListener("input", (e) => localStorage.setItem("doc_manager_free_memo", e.target.value));
+    
+    // スキャンタブのクリックイベント設定
+    const dz = document.getElementById("dropZone");
+    if(dz) dz.addEventListener("click", () => document.getElementById("scanInput").click());
 };
 
+// --- 保存・読み込み ---
 async function saveAll() {
     try {
         await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ method: "save", payload: JSON.stringify({ projects }) }) });
         renderCalendar();
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Save error:", e); }
 }
 
 async function loadFromCloud() {
@@ -33,9 +38,10 @@ async function loadFromCloud() {
         const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ method: "load" }) });
         const result = await response.json();
         projects = result.projects || {};
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Load error:", e); }
 }
 
+// --- 案件管理 ---
 function createNewProject() {
     const name = document.getElementById("newProjectName").value.trim();
     if (!name) return;
@@ -48,7 +54,7 @@ function createNewProject() {
 function switchProject(id) {
     currentProjectId = id;
     const isSelected = !!id;
-    document.getElementById("projectDateArea").style.display = isSelected ? "block" : "none";
+    document.getElementById("projectDateArea").style.display = isSelected ? "flex" : "none";
     document.getElementById("projectMemoArea").style.display = isSelected ? "block" : "none";
     document.getElementById("listArea").style.display = isSelected ? "block" : "none";
     if (isSelected) {
@@ -58,6 +64,21 @@ function switchProject(id) {
         document.getElementById("projectSpecificMemo").value = pj.projectMemo || "";
         updateCountdown(); renderTable(); renderCalendar();
     }
+}
+
+// --- 書類・ファイル操作 ---
+function addNewDocument() {
+    if (!currentProjectId) return;
+    const name = document.getElementById("newDocName").value.trim();
+    if (!name) return;
+    projects[currentProjectId].docs.push({
+        status: "未着手", importance: document.getElementById("newDocImportance").value,
+        name, target: document.getElementById("newDocTarget").value,
+        deadline: document.getElementById("newDocDeadline").value, ref: document.getElementById("newDocRef").value,
+        fileData: ""
+    });
+    document.getElementById("newDocName").value = "";
+    saveAll(); renderTable();
 }
 
 function handleFileUpload(index, file) {
@@ -113,6 +134,38 @@ function renderTable() {
     renderCalendar();
 }
 
+// --- 資料スキャン機能（復活） ---
+async function handleFileSelect(e) { processPDF(e.target.files[0]); }
+async function handleFileDrop(e) { e.preventDefault(); processPDF(e.dataTransfer.files[0]); }
+
+async function processPDF(file) {
+    if (!file || file.type !== "application/pdf") return;
+    const status = document.getElementById("scanStatus");
+    const previewArea = document.getElementById("pdfPreviewArea");
+    status.innerText = "読み込み中...";
+    previewArea.innerHTML = "";
+
+    const reader = new FileReader();
+    reader.onload = async function() {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+        status.innerText = `全 ${pdf.numPages} ページをプレビュー表示中`;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({scale: 0.5});
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({canvasContext: context, viewport: viewport}).promise;
+            previewArea.appendChild(canvas);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// --- その他UI機能 ---
 function updateDocField(i, f, v) { projects[currentProjectId].docs[i][f] = v; saveAll(); }
 function refreshProjectSelect() {
     const s = document.getElementById("projectSelect");
