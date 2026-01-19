@@ -97,7 +97,7 @@
         <div id="calendar-section" class="tab-content">
             <div class="calendar-header">
                 <button onclick="changeMonth(-1)" class="btn-sub">◀ 前月</button>
-                <h2 id="currentMonthDisplay">2024年 1月</h2>
+                <h2 id="currentMonthDisplay">----年 --月</h2>
                 <button onclick="changeMonth(1)" class="btn-sub">次月 ▶</button>
             </div>
             <div id="calendarGrid" class="calendar-grid"></div>
@@ -108,6 +108,7 @@
                 <div class="scan-layout">
                     <div class="scan-controls">
                         <div class="pdf-drop-zone" id="dropZone">PDFをドロップして解析</div>
+                        <input type="file" id="pdfInput" accept="application/pdf" style="display:none" multiple>
                         <div id="fileList" class="file-chips"></div>
                         <input type="text" id="customSearchWords" placeholder="検索ワードを入力..." class="search-input">
                         <div id="scanStatus" class="status-text"></div>
@@ -115,7 +116,7 @@
                         <button onclick="clearAllScanData()" class="btn-delete full-width">スキャンデータ消去</button>
                     </div>
                     <div class="pdf-preview-pane">
-                        <div id="previewPlaceholder" class="preview-placeholder">結果をクリック</div>
+                        <div id="previewPlaceholder" class="preview-placeholder">解析結果をクリックして表示</div>
                         <iframe id="pdfViewer" src="" class="pdf-frame"></iframe>
                     </div>
                 </div>
