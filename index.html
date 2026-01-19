@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提出書類管理システム</title>
+    <link rel="stylesheet" href="style.css?v=20260119_v1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌈 提出書類管理 <small>ver.教育型</small></h1>
+            <div id="projectCountdown" class="countdown-card">案件を選択してね！✨</div>
+        </header>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" id="defaultTab" onclick="switchTab('list-section', this)">📋 リスト・メモ</button>
+            <button class="tab-btn" onclick="switchTab('calendar-section', this); renderCalendar();">📅 カレンダー</button>
+            <button class="tab-btn" onclick="switchTab('scan-section', this)">🔍 資料スキャン</button>
+        </div>
+        
+        <div id="list-section" class="tab-content active">
+            <div class="main-layout">
+                <div class="list-container">
+                    <section class="project-info">
+                        <div class="input-group">
+                            <select id="projectSelect" onchange="switchProject(this.value)">
+                                <option value="">-- 案件を選択 --</option>
+                            </select>
+                            <input type="text" id="newProjectName" placeholder="新規案件名">
+                            <button onclick="createNewProject()" class="btn-primary">案件作成</button>
+                            <button onclick="deleteCurrentProject()" class="btn-delete">🗑️</button>
+                        </div>
+                        <div id="projectDateArea" class="date-row" style="display:none;">
+                            <span>工期：</span>
+                            <input type="date" id="projectStart" onchange="updateProjectDates()">
+                            <span>〜</span>
+                            <input type="date" id="projectEnd" onchange="updateProjectDates()">
+                        </div>
+                    </section>
+
+                    <section id="projectMemoArea" style="display:none;" class="memo-box">
+                        <div class="sub-title">📌 案件詳細メモ</div>
+                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="現場の注意点などをメモ"></textarea>
+                    </section>
+
+                    <div id="listArea" style="display:none;">
+                        <div class="phase-tabs">
+                            <button class="phase-btn active" onclick="filterPhase('all', this)">すべて</button>
+                            <button class="phase-btn" onclick="filterPhase('着手前', this)">🚩 着手前</button>
+                            <button class="phase-btn" onclick="filterPhase('施工中', this)">🛠 施工中</button>
+                            <button class="phase-btn" onclick="filterPhase('完成', this)">🏁 完成</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="targetTable">
+                                <thead>
+                                    <tr>
+                                        <th>状況</th><th>分類</th><th>書類名 (根拠)</th><th>期限</th><th>雛形</th><th>削除</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sticky-note-area">
+                    <div class="sticky-note-title">📌 全案件共通メモ</div>
+                    <textarea id="freeMemo" placeholder="案件をまたぐメモ..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="calendar-section" class="tab-content">
+            <div class="calendar-header">
+                <button onclick="changeMonth(-1)">◀</button>
+                <h2 id="currentMonthDisplay"></h2>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+            <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+
+        <div id="scan-section" class="tab-content">
+            <div class="scan-layout">
+                <div class="scan-controls">
+                    <div class="pdf-drop-zone" id="dropZone">PDFをドロップ！</div>
+                    <input type="file" id="pdfInput" accept="application/pdf" style="display:none" multiple>
+                    <div id="fileList"></div>
+                </div>
+                <div class="pdf-preview-pane">
+                    <iframe id="pdfViewer" src="" class="pdf-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js?v=20260119_v1"></script>
+</body>
+</html>
