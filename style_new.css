@@ -1,0 +1,59 @@
+:root { 
+    --primary: #4a90e2; 
+    --bg: #fdfaf6; 
+    --sticky-bg: #fff9c4; 
+}
+* { box-sizing: border-box; }
+body { font-family: "Hiragino Sans", "Meiryo", sans-serif; background-color: var(--bg); margin: 0; padding: 15px; }
+.container { max-width: 1600px; margin: auto; }
+
+/* ヘッダー */
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.countdown-card { 
+    background: #fffef0; padding: 12px 20px; border-radius: 15px; 
+    box-shadow: 0 4px 0 #e6dbb9; border: 2px solid #f6c23e; font-weight: bold; 
+}
+.days-num { font-size: 1.6rem; color: #e74c3c; margin: 0 5px; }
+
+/* 丸いPOPなタブ */
+.tab-bar { display: flex; gap: 8px; margin-bottom: 0; }
+.tab-btn { 
+    flex: 1; padding: 12px; background: #d1d8e0; border: none; 
+    border-radius: 15px 15px 0 0; font-weight: bold; cursor: pointer; color: #666; transition: 0.3s;
+}
+.tab-btn.active { background: #fff; color: var(--primary); border-top: 5px solid var(--primary); }
+
+.tab-content { 
+    display: none; background: #fff; padding: 25px; border-radius: 0 15px 15px 15px; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08); min-height: 80vh; 
+}
+.tab-content.active { display: block; }
+
+/* レイアウト：左にリスト、右に付箋 */
+.main-layout { display: flex; flex-direction: column; gap: 20px; }
+@media (min-width: 1024px) {
+    .main-layout { flex-direction: row; align-items: flex-start; }
+    .list-container { flex: 1; }
+    .sticky-note-area { width: 320px; position: sticky; top: 10px; }
+}
+
+/* 付箋エリア */
+.sticky-note-area { 
+    background: var(--sticky-bg); padding: 20px; border-radius: 5px; 
+    box-shadow: 5px 5px 0 #e6db55; border: 1px solid #eee; transform: rotate(1deg);
+}
+#freeMemo { width: 100%; min-height: 500px; background: transparent; border: none; outline: none; font-size: 1.1rem; resize: none; line-height: 1.6; }
+
+/* テーブル装飾 */
+table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+th { text-align: left; color: var(--primary); padding: 10px; }
+td { background: #f9f9f9; padding: 12px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+td:first-child { border-radius: 12px 0 0 12px; }
+td:last-child { border-radius: 0 12px 12px 0; }
+
+/* ぷっくりボタン */
+.btn-primary { 
+    background: var(--primary); border: none; border-radius: 12px; padding: 10px 20px; 
+    color: white; font-weight: bold; box-shadow: 0 4px 0 #357abd; cursor: pointer; 
+}
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 #357abd; }
