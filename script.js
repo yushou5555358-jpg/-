@@ -227,4 +227,5 @@ async function processPDF(file) {
         status.innerText = "完了";
     };
     reader.readAsArrayBuffer(file);
+
 }
