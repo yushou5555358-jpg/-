@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>提出書類管理システム</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260119_v1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header class="main-header">
             <div class="header-left">
-                <h1>📝 提出書類管理システム</h1>
+                <h1>📝 提出書類管理</h1>
             </div>
             <div id="projectCountdown" class="countdown-badge">案件を選択してください</div>
         </header>
@@ -28,62 +28,36 @@
                     <div class="card project-control-card">
                         <div class="input-inline-group">
                             <select id="projectSelect" onchange="switchProject(this.value)" class="custom-select">
-                                <option value="">案件を選択してください</option>
+                                <option value="">案件を選択</option>
                             </select>
-                            <input type="text" id="newProjectName" placeholder="新規案件名を入力" class="custom-input">
-                            <button onclick="createNewProject()" class="btn-add-blue">案件追加</button>
-                            <button onclick="deleteCurrentProject()" class="btn-icon-delete">🗑️ 案件削除</button>
+                            <input type="text" id="newProjectName" placeholder="新規案件名" class="custom-input">
+                            <button onclick="createNewProject()" class="btn-add">追加</button>
+                            <button onclick="deleteCurrentProject()" class="btn-icon-delete">🗑️</button>
                         </div>
-                        
-                        <div id="projectDateArea" class="date-selection-row" style="display:none; margin-top:20px;">
+
+                        <div id="projectDateArea" class="date-selection-row" style="display:none;">
                             <label>工期：</label>
                             <input type="date" id="projectStart" onchange="updateProjectDates()" class="custom-date">
-                            <span> 〜 </span>
+                            <span>〜</span>
                             <input type="date" id="projectEnd" onchange="updateProjectDates()" class="custom-date">
                         </div>
                     </div>
 
                     <div id="projectMemoArea" class="card memo-card" style="display:none;">
-                        <h3>📌 案件詳細メモ（現場注意点・担当者連絡先など）</h3>
-                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="この案件に関する重要な情報を入力してください。入力内容は自動でクラウドに保存されます。"></textarea>
+                        <h3>📌 案件詳細メモ（現場打合せ・指示事項・注意点）</h3>
+                        <textarea id="projectSpecificMemo" onblur="saveProjectMemo()" placeholder="現場での決定事項や注意点などを入力してください。自動保存されます。"></textarea>
                     </div>
 
-                    <div id="listArea" style="display:none;">
-                        <div class="card doc-registration-card">
-                            <p class="section-title">新しい提出書類を追加</p>
-                            <div class="doc-input-grid">
-                                <input type="text" id="newDocName" placeholder="書類名" class="custom-input">
-                                <input type="text" id="newDocTarget" placeholder="提出先" class="custom-input">
-                                <input type="date" id="newDocDeadline" class="custom-date">
-                                <select id="newDocImportance" class="custom-select">
-                                    <option value="通常">通常</option>
-                                    <option value="重要">重要</option>
-                                    <option value="至急">至急</option>
-                                </select>
-                                <input type="text" id="newDocRef" placeholder="備考・参照条文など" class="custom-input">
-                            </div>
-                            <button onclick="addNewDocument()" class="btn-register-wide">リストに新規登録する</button>
-                        </div>
-
-                        <div class="card list-card">
-                            <div class="table-container">
-                                <table id="docTable">
-                                    <thead>
-                                        <tr>
-                                            <th>完了</th>
-                                            <th>重要度</th>
-                                            <th>書類名</th>
-                                            <th>提出先</th>
-                                            <th>提出期限</th>
-                                            <th>備考・根拠</th>
-                                            <th>資料添付</th>
-                                            <th>削除</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbody">
-                                        </tbody>
-                                </table>
-                            </div>
+                    <div id="listArea" class="card list-card" style="display:none;">
+                        <div class="table-container">
+                            <table id="targetTable">
+                                <thead>
+                                    <tr>
+                                        <th>完了</th><th>分類</th><th>書類名</th><th>提出先</th><th>期限</th><th>備考</th><th>削除</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -91,38 +65,31 @@
                 <aside class="sticky-note-sidebar">
                     <div class="sticky-note">
                         <h3>📌 全案件共通メモ</h3>
-                        <p class="sticky-subtext">事務所連絡・共通ルールなど</p>
-                        <textarea id="freeMemo" placeholder="ここに入力した内容はブラウザに保存されます。"></textarea>
+                        <p class="sticky-subtext">案件をまたぐ共通の連絡事項など</p>
+                        <textarea id="freeMemo" placeholder="ここにメモを入力..."></textarea>
                     </div>
                 </aside>
             </div>
         </div>
 
         <div id="calendar-section" class="tab-panel">
-            <div class="card">
+            <div class="card calendar-card">
                 <div class="calendar-controls">
-                    <button onclick="changeMonth(-1)" class="btn-cal-nav">◀ 前の月</button>
+                    <button onclick="changeMonth(-1)" class="btn-cal-nav">◀ 前月</button>
                     <h2 id="currentMonthDisplay"></h2>
-                    <button onclick="changeMonth(1)" class="btn-cal-nav">次の月 ▶</button>
+                    <button onclick="changeMonth(1)" class="btn-cal-nav">次月 ▶</button>
                 </div>
-                <div id="calendarGrid" class="calendar-grid">
-                    </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
             </div>
         </div>
 
         <div id="scan-section" class="tab-panel">
             <div class="card">
-                <h3>🔍 PDF資料内プレビュー・簡易スキャン</h3>
-                <div class="drop-zone" id="dropZone" onclick="document.getElementById('scanInput').click()">
-                    ここにPDFファイルをドロップするか、クリックしてファイルを選択してください
-                    <input type="file" id="scanInput" style="display:none" accept="application/pdf" onchange="handleFileSelect(event)">
-                </div>
-                <div id="scanStatus" class="status-text"></div>
-                <div id="pdfPreviewArea" class="pdf-preview-grid">
-                    </div>
+                <div class="drop-zone" id="dropZone">PDFをここにドロップしてください</div>
+                <div id="fileList"></div>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js?v=20260119_v1"></script>
 </body>
 </html>

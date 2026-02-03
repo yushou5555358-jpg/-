@@ -1,143 +1,65 @@
-/* デザイン定数定義 */
 :root {
     --primary: #4a90e2;
-    --primary-dark: #357abd;
-    --primary-light: #eef5ff;
     --border: #e0e6ed;
     --bg-light: #f4f7f9;
-    --sticky-yellow: #fffde7;
-    --sticky-border: #fdd835;
-    --accent-red: #e74c3c;
-    --success: #27ae60;
-    --text-main: #2c3e50;
-    --text-sub: #7f8c8d;
-    --shadow: 0 4px 15px rgba(0,0,0,0.08);
+    --sticky-yellow: #fff9c4;
 }
 
-/* 全体レイアウト設定 */
-body { 
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
-    background-color: var(--bg-light); 
-    margin: 0; padding: 20px; 
-    color: var(--text-main); 
-    line-height: 1.6;
-}
-.container { max-width: 1440px; margin: auto; }
+body { font-family: "Segoe UI", "Hiragino Sans", sans-serif; background-color: var(--bg-light); margin: 0; padding: 20px; color: #333; }
+.container { max-width: 1400px; margin: auto; }
 
-/* ヘッダーデザイン */
-.main-header { 
-    display: flex; justify-content: space-between; align-items: center; 
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    padding: 25px 35px; border-radius: 15px; 
-    box-shadow: var(--shadow); margin-bottom: 30px; 
-    border-left: 8px solid var(--primary);
-}
-.header-left h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; color: var(--primary); }
-.countdown-badge { 
-    background: white; border: 2px solid var(--primary); padding: 12px 25px; 
-    border-radius: 30px; font-weight: bold; color: var(--primary); 
-    box-shadow: 0 2px 10px rgba(74,144,226,0.15);
-}
+/* ヘッダー */
+.main-header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.countdown-badge { background: white; border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
 
-/* ナビゲーションメニュー */
-.tab-navigation { display: flex; gap: 10px; margin-bottom: -1px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.nav-item { 
-    padding: 15px 35px; border: none; background: #dfe6ed; 
-    border-radius: 15px 15px 0 0; cursor: pointer; font-weight: bold; 
-    color: var(--text-sub); transition: all 0.3s ease; white-space: nowrap;
-}
-.nav-item.active { 
-    background: white; color: var(--primary); 
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-    border-bottom: 5px solid var(--primary);
-}
+/* ナビゲーション */
+.tab-navigation { display: flex; gap: 5px; margin-bottom: 0; }
+.nav-item { padding: 12px 25px; border: none; background: #e0e6ed; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; color: #666; transition: 0.2s; }
+.nav-item.active { background: white; color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-/* アニメーション効果 */
-.tab-panel { display: none; animation: slideUp 0.4s ease-out; }
+/* パネル制御 */
+.tab-panel { display: none; background: transparent; padding-top: 20px; }
 .tab-panel.active { display: block; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 共通カードデザイン */
-.card { background: white; border: 1px solid var(--border); border-radius: 18px; padding: 30px; margin-bottom: 30px; box-shadow: var(--shadow); }
+/* カード基本 */
+.card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-/* 入力フォーム類 */
-.custom-select, .custom-input, .custom-date { 
-    padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; 
-    font-size: 1rem; background: #fff; transition: all 0.2s; width: 100%; box-sizing: border-box;
-}
-.custom-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(74,144,226,0.12); }
+/* 入力エリア */
+.input-inline-group { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+.custom-select, .custom-input, .custom-date { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+.custom-input { flex-grow: 1; }
+.btn-add { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-icon-delete { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px; padding: 8px; cursor: pointer; }
 
-/* 書類登録用グリッドレイアウト */
-.doc-input-grid { 
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-    gap: 15px; margin-bottom: 20px; 
+/* 案件メモ（拡大） */
+.memo-card h3 { font-size: 1.1rem; color: var(--primary); margin-top: 0; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
+#projectSpecificMemo {
+    width: 100%; min-height: 350px; border: 1px solid var(--border); border-radius: 8px;
+    padding: 15px; font-size: 1.05rem; line-height: 1.6; background-color: #fafbfc; resize: vertical; outline: none;
 }
-.btn-register-wide { 
-    width: 100%; background: var(--primary); color: white; border: none; 
-    padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; 
-    font-size: 1.1rem; box-shadow: 0 5px 15px rgba(74,144,226,0.25);
-    transition: background 0.2s;
-}
-.btn-register-wide:hover { background: var(--primary-dark); }
+#projectSpecificMemo:focus { background-color: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); }
 
-/* ★重要：モバイル横スクロール強制対応 */
-.table-container { 
-    width: 100%; overflow-x: auto !important; -webkit-overflow-scrolling: touch;
-    border-radius: 12px; border: 1px solid var(--border);
-}
-table { width: 100%; border-collapse: collapse; min-width: 1200px !important; background: #fff; }
-th { background: #f8fafc; padding: 20px 15px; text-align: left; font-size: 0.9rem; color: var(--text-sub); border-bottom: 2px solid var(--border); }
-td { border-bottom: 1px solid #f1f4f7; padding: 18px 15px; vertical-align: middle; }
-tr:hover td { background-color: #f9fbff; }
+/* レイアウト */
+.app-layout { display: flex; gap: 20px; }
+.content-main { flex: 1; }
+.sticky-note-sidebar { width: 320px; }
 
-/* ボタン類 */
-.btn-pdf-link { 
-    background: var(--success); color: white; text-decoration: none; 
-    padding: 10px 18px; border-radius: 10px; font-size: 0.9rem; 
-    display: inline-flex; align-items: center; gap: 8px; font-weight: bold; white-space: nowrap;
-}
-.btn-add-blue { 
-    background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
-    color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer;
-}
-.btn-icon-delete { background: #fff; border: 1px solid #ffccd5; border-radius: 10px; padding: 10px 15px; cursor: pointer; color: var(--accent-red); font-weight: bold; }
+/* 付箋 */
+.sticky-note { background: var(--sticky-yellow); padding: 20px; border-radius: 8px; box-shadow: 5px 5px 15px rgba(0,0,0,0.1); }
+.sticky-subtext { font-size: 0.8rem; color: #b7791f; margin-bottom: 10px; }
+#freeMemo { width: 100%; min-height: 450px; background: transparent; border: none; outline: none; resize: none; font-size: 1rem; line-height: 1.6; }
 
-/* 2カラムレイアウト設定 */
-.app-layout { display: flex; gap: 35px; flex-direction: column; }
-@media (min-width: 1200px) {
-    .app-layout { flex-direction: row; }
-    .content-main { flex: 1; }
-    .sticky-note-sidebar { width: 380px; }
-}
+/* テーブル */
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #f8fafc; border-bottom: 2px solid var(--border); padding: 12px; text-align: left; }
+td { border-bottom: 1px solid var(--border); padding: 12px; }
 
-/* メモ帳エリア */
-.sticky-note { 
-    background: var(--sticky-yellow); padding: 35px; border-radius: 5px; 
-    box-shadow: 10px 10px 25px rgba(0,0,0,0.07); position: sticky; top: 20px;
-    border-left: 8px solid var(--sticky-border);
-}
-#freeMemo, #projectSpecificMemo { 
-    width: 100%; min-height: 450px; border: 1px solid var(--border); 
-    border-radius: 15px; padding: 25px; font-size: 1.15rem; line-height: 1.8;
-    resize: vertical; outline: none; background: #ffffff; box-sizing: border-box;
-}
+/* カレンダー */
+.calendar-controls { display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 20px; }
+.btn-cal-nav { background: white; border: 1px solid var(--border); padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
+.calendar-day { background: white; min-height: 100px; padding: 10px; }
 
-/* 資料スキャン用 */
-.drop-zone { border: 4px dashed var(--border); border-radius: 20px; padding: 60px; text-align: center; color: var(--text-sub); cursor: pointer; transition: 0.3s; font-weight: bold; }
-.drop-zone:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
-.status-text { margin-top: 15px; color: var(--primary); font-weight: bold; text-align: center; }
-.pdf-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 30px; }
-canvas { width: 100%; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-
-/* カレンダー用 */
-.calendar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: var(--border); border: 2px solid var(--border); border-radius: 15px; overflow: hidden; }
-.calendar-day { background: white; min-height: 150px; padding: 15px; }
-.event-label { font-size: 0.8rem; padding: 6px 10px; margin-bottom: 6px; border-radius: 8px; background: var(--primary-light); color: var(--primary); border-left: 5px solid var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* スマホ最適化 */
-@media (max-width: 768px) {
-    body { padding: 10px; }
-    .main-header { flex-direction: column; gap: 15px; padding: 20px; text-align: center; }
-    .nav-item { padding: 12px 18px; font-size: 0.9rem; }
-}
+/* スキャン */
+.drop-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; color: #999; }
